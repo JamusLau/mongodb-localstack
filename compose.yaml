@@ -1,0 +1,39 @@
+services:
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "localstack_data:/var/lib/localstack"
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_DATA_DIR: /data/db
+      MONGO_LOG_DIR: /dev/null
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin1
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    restart: always
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin1
+      ME_CONFIG_MONGODB_URL: mongodb://admin:admin1@mongodb:27017
+    ports:
+      - "8081:8081"
+  
+volumes:
+  localstack_data:
+  mongodb_data:
